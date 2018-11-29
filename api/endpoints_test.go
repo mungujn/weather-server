@@ -6,11 +6,32 @@ import (
 	"testing"
 )
 
+// TestPastWeatherHandler: test the location endpoint/handler
+func TestPastWeatherHandler(t *testing.T) {
+	expectedCode := http.StatusOK
+	expectedBody := `{"message":"success"}`
+	testEndpoint(t, "GET", "/api/v1/past-weather?location=kampala", PastWeatherHandler, expectedCode, expectedBody)
+}
+
+// TestCurrentWeatherHandler: test the location endpoint/handler
+func TestCurrentWeatherHandler(t *testing.T) {
+	expectedCode := http.StatusOK
+	expectedBody := `{"message":"success"}`
+	testEndpoint(t, "GET", "/api/v1/current-weather?location=kampala", PastWeatherHandler, expectedCode, expectedBody)
+}
+
+// TestFutureWeatherHandler: test the endpoint that retrieves the next days
+func TestFutureWeatherHandler(t *testing.T) {
+	expectedCode := http.StatusOK
+	expectedBody := `{"message":"success"}`
+	testEndpoint(t, "GET", "/api/v1/future-weather?location=kampala", PastWeatherHandler, expectedCode, expectedBody)
+}
+
 // function type
 type fn func(w http.ResponseWriter, r *http.Request)
 
-// accessEndpoint : Helper function to reduce test verbosity
-func accessEndpoint(t *testing.T, method, url string, handlerFunc fn) (code int, body string) {
+// testEndpoint : Helper function to reduce test verbosity
+func testEndpoint(t *testing.T, method, url string, handlerFunc fn, expectedCode int, expectedBody string) {
 	// create request to pass to handler
 	request, err := http.NewRequest(method, url, nil)
 	if err != nil {
@@ -24,22 +45,14 @@ func accessEndpoint(t *testing.T, method, url string, handlerFunc fn) (code int,
 	// serve request
 	handler.ServeHTTP(recorder, request)
 
-	return recorder.Code, recorder.Body.String()
-}
-
-// test the location endpoint/handler
-func testLocationHandler(t *testing.T) {
-
-	code, body := accessEndpoint(t, "GET", "/api/v1/locations/kampala", LocationHandler)
-
 	// confirm status code
-	expectedCode := http.StatusOK
+	code := recorder.Code
 	if code != expectedCode {
 		t.Errorf("Handler returned wrong code: got %v instead of %v", code, expectedCode)
 	}
 
 	//confirm body
-	expectedBody := `{"message": "success"}`
+	body := recorder.Body.String()
 	if body != expectedBody {
 		t.Errorf("Handler returned wrong body: got %v instead of %v", body, expectedBody)
 	}
