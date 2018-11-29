@@ -3,74 +3,64 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
 	"weather/common/responses"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
-func main() {
+// createRouter : create router
+func createRouter() *mux.Router {
 	r := mux.NewRouter()
 
-	r.PathPrefix("/api/v1")
-	r.HandleFunc("/past-weather", PastWeatherHandler).Queries("location", "location").Methods("GET")
-	r.HandleFunc("/current-weather", CurrentWeatherHandler).Queries("location", "location").Methods("GET")
-	r.HandleFunc("/future-weather", FutureWeatherHandler).Queries("location", "location").Methods("GET")
+	r.Handle("/weather", dataValidationMiddleware(http.HandlerFunc(WeatherHandler)))
 
-	srv := &http.Server{
-		Addr:         "127.0.0.1:8080",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-		Handler:      r,
-	}
-
-	log.SetPrefix("/api/v1")
-	log.Fatal(srv.ListenAndServe())
+	return r
 }
 
-// weather : weather data
-type weather struct {
-	Location    string `json:"location"`
-	Temparature int    `json:"temparature"`
+func main() {
+	router := createRouter()
+	port := "8080"
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	allowedMethods := handlers.AllowedMethods([]string{"GET"})
+
+	log.Printf("Server listening on port %v", port)
+	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(allowedOrigins, allowedMethods)(router)))
 }
 
-//PastWeatherHandler : handler function for retrieving past weather
-func PastWeatherHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	log.Printf("/locations/%v", params["location"])
+//WeatherHandler : handler function for retrieving past weather
+func WeatherHandler(w http.ResponseWriter, r *http.Request) {
+	location, date, _ := getLocationAndDateFromURL(r)
+	log.Printf("---%v---", r.URL)
 
-	wth := weather{
-		Location:    params["location"],
-		Temparature: 28,
-	}
+	wth := getWeather(location, date)
 
 	responses.RespondWithData(w, wth)
 }
 
+//dataValidationMiddleware : validate that the location has been defined
+func dataValidationMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _, found := getLocationAndDateFromURL(r)
 
-//CurrentWeatherHandler : handler function for retrieving the current weather
-func CurrentWeatherHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	log.Printf("/locations/%v", params["location"])
-
-	wth := weather{
-		Location:    params["location"],
-		Temparature: 28,
-	}
-
-	responses.RespondWithData(w, wth)
+		if found {
+			next.ServeHTTP(w, r)
+		} else {
+			log.Println("Location/Date missing from request")
+			responses.RespondBadRequest(w)
+			return
+		}
+	})
 }
 
+// getLocationAndDateFromURL : get Location From URL
+func getLocationAndDateFromURL(r *http.Request) (string, string, bool) {
+	location, locationFound := r.URL.Query()["location"]
+	date, dateFound := r.URL.Query()["date"]
 
-//FutureWeatherHandler : handler function for retrieving future weather forecasts
-func FutureWeatherHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	log.Printf("/locations/%v", params["location"])
-
-	wth := weather{
-		Location:    params["location"],
-		Temparature: 28,
+	if !locationFound || !dateFound || len(location) != 1 || len(date) != 1 {
+		return "", "", false
 	}
 
-	responses.RespondWithData(w, wth)
+	return location[0], date[0], true
 }

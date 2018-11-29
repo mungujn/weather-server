@@ -6,32 +6,25 @@ import (
 	"testing"
 )
 
-// TestPastWeatherHandler: test the location endpoint/handler
-func TestPastWeatherHandler(t *testing.T) {
+// TestWeatherHandler: test the location endpoint/handler
+func TestWeatherHandler(t *testing.T) {
 	expectedCode := http.StatusOK
-	expectedBody := `{"message":"success"}`
-	testEndpoint(t, "GET", "/api/v1/past-weather?location=kampala", PastWeatherHandler, expectedCode, expectedBody)
+	expectedBody := `{"location":"kampala","date":"today","temparature":28}`
+	testEndpoint(t, "GET", "/weather?location=kampala&date=today", expectedCode, expectedBody)
 }
 
-// TestCurrentWeatherHandler: test the location endpoint/handler
-func TestCurrentWeatherHandler(t *testing.T) {
-	expectedCode := http.StatusOK
-	expectedBody := `{"message":"success"}`
-	testEndpoint(t, "GET", "/api/v1/current-weather?location=kampala", PastWeatherHandler, expectedCode, expectedBody)
-}
-
-// TestFutureWeatherHandler: test the endpoint that retrieves the next days
-func TestFutureWeatherHandler(t *testing.T) {
-	expectedCode := http.StatusOK
-	expectedBody := `{"message":"success"}`
-	testEndpoint(t, "GET", "/api/v1/future-weather?location=kampala", PastWeatherHandler, expectedCode, expectedBody)
+// TestBadRequest: test the location endpoint/handler returns bad request if no location/date specified
+func TestBadRequest(t *testing.T) {
+	expectedCode := http.StatusBadRequest
+	expectedBody := `{"message":"No location/date specified"}`
+	testEndpoint(t, "GET", "/weather?location=kampala", expectedCode, expectedBody)
 }
 
 // function type
 type fn func(w http.ResponseWriter, r *http.Request)
 
 // testEndpoint : Helper function to reduce test verbosity
-func testEndpoint(t *testing.T, method, url string, handlerFunc fn, expectedCode int, expectedBody string) {
+func testEndpoint(t *testing.T, method, url string, expectedCode int, expectedBody string) {
 	// create request to pass to handler
 	request, err := http.NewRequest(method, url, nil)
 	if err != nil {
@@ -40,10 +33,12 @@ func testEndpoint(t *testing.T, method, url string, handlerFunc fn, expectedCode
 
 	// create response recoder
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(handlerFunc)
 
-	// serve request
-	handler.ServeHTTP(recorder, request)
+	// get router
+	router := createRouter()
+
+	// serve
+	router.ServeHTTP(recorder, request)
 
 	// confirm status code
 	code := recorder.Code
