@@ -31,7 +31,8 @@ func RespondBadRequest(w http.ResponseWriter) {
 }
 
 // RespondInternalServerError : Respond ISE
-func RespondInternalServerError(w http.ResponseWriter) {
+func RespondInternalServerError(w http.ResponseWriter, err error) {
+	log.Println(err)
 	log.Println("---Responding ISE---")
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Content-Type", "application/json")

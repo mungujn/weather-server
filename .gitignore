@@ -1,1 +1,7 @@
+.vscode
 debug.test
+cert.txt
+server.crt
+server.csr
+server.key
+command.txt

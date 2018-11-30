@@ -21,9 +21,10 @@ func createRouter() *mux.Router {
 func main() {
 	router := createRouter()
 	port := "8080"
+
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
 	allowedMethods := handlers.AllowedMethods([]string{"GET"})
-
+	
 	log.Printf("Server listening on port %v", port)
 	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(allowedOrigins, allowedMethods)(router)))
 }
@@ -33,8 +34,11 @@ func WeatherHandler(w http.ResponseWriter, r *http.Request) {
 	location, date, _ := getLocationAndDateFromURL(r)
 	log.Printf("---%v---", r.URL)
 
-	wth := getWeather(location, date)
+	wth, err := getWeather(location, date)
 
+	if err != nil {
+		responses.RespondInternalServerError(w, err)
+	}
 	responses.RespondWithData(w, wth)
 }
 
