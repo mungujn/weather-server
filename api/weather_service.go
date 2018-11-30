@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"time"
-	pb "weather/common/crpc"
+	pb "weather/common/services"
 
 	"golang.org/x/net/context"
 
@@ -24,7 +24,7 @@ func getWeather(location, date string) (*pb.Weather, error) {
 	log.Println("Getting weather from weather server")
 	connection, err := getRPCConnection()
 	defer connection.Close()
-	
+
 	if err != nil {
 		log.Println("Failed to get RPC connection")
 		return nil, err
