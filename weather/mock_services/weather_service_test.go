@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/net/context"
 
-	pbmock "github.com/mungujn/weather/weather/mock_services"
-	pb "github.com/mungujn/weather/weather/services"
+	pbmock "github.com/mungujn/weather-server/weather/mock_services"
+	pb "github.com/mungujn/weather-server/weather/services"
 
 	"github.com/golang/mock/gomock"
 	"github.com/golang/protobuf/proto"

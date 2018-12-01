@@ -7,7 +7,7 @@ package mock_services
 import (
 	context "context"
 	gomock "github.com/golang/mock/gomock"
-	services "github.com/mungujn/weather/weather/services"
+	services "github.com/mungujn/weather-server/weather/services"
 	grpc "google.golang.org/grpc"
 	reflect "reflect"
 )

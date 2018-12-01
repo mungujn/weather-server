@@ -7,7 +7,7 @@ import (
 	"net"
 	"log"
 	"golang.org/x/net/context"
-	pb "github.com/mungujn/weather/common/services"
+	pb "github.com/mungujn/weather-server/weather/services"
 )
 
 const (
@@ -22,11 +22,7 @@ type server struct{}
 // ReturnWeather implements pb.GetWeather
 func (s *server) GetWeather(ctx context.Context, in *pb.LocationAndDate) (*pb.Weather, error){
 	log.Println("Weather request received")
-	return &pb.Weather{
-		Location: "Kampala",
-		Date: "Today",
-		Temperature: 28,
-	}, nil
+	return getWeather(in.Location, in.Date)
 }
 
 func main(){
