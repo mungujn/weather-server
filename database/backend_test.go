@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"github.com/mungujn/weather-server/common/utils"
 )
 
 // TestCreate tests the create function
@@ -32,7 +33,7 @@ func TestRead(t *testing.T) {
 
 	savedData, err := readData(location)
 
-	if err != nil || !mapsEqual(savedData, data) {
+	if err != nil || !utils.MapsEqual(savedData, data) {
 		t.Errorf("Failed to read %s, expecting: %v got: %v %v", location, data, savedData, err)
 	}
 	t.Log("Read")
@@ -68,25 +69,4 @@ func TestDelete(t *testing.T) {
 		t.Errorf("Failed to delete %s, error: %v", location, err)
 	}
 	t.Log("Deleted")
-}
-
-// check if two string maps are equal
-func mapsEqual(m1, m2 map[string]string) bool {
-	l1 := 0
-
-	for k1, v1 := range m1 {
-		l1++
-		v2, e := m2[k1]
-		if !e || v1 != v2 {
-			return false
-		}
-	}
-
-	l2 := len(m2)
-
-	if l1 != l2 {
-		return false
-	}
-
-	return true
 }

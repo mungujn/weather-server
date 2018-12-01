@@ -4,11 +4,24 @@ import (
 	pb "github.com/mungujn/weather-server/weather/services"
 )
 
-// getWeather retrieves weather from an API
+const (
+	cacheTTL = 60 * 60 * 10
+)
+
+// getWeather retrieves weather
 func getWeather(location, date string) (*pb.Weather, error) {
+	data, err := readData(location + "/" + date)
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.Weather{
-		Location: "Kampala",
-		Date: "Today",
-		Temperature: 28,
+		Location:    data["location"],
+		Date:        data["date"],
+		Temperature: data["temperature"],
 	}, nil
+}
+
+func readWeatherFromDb(location, date string) (*pb.Weather, error) {
+
 }

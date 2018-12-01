@@ -14,9 +14,7 @@ message LocationAndDate {
     string date = 2;
 }
 
-// The response message containing the weather
+// The response message containing weather data
 message Weather {
-    string location = 1;
-    string date = 2;
-    int32 temperature = 3;
+    map<string, string> data = 2;
 }

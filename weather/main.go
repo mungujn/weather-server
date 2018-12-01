@@ -1,31 +1,42 @@
-package main 
+package main
 
 import (
+	"log"
+	"net"
+
+	pb "github.com/mungujn/weather-server/weather/services"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc"
-	"net"
-	"log"
-	"golang.org/x/net/context"
-	pb "github.com/mungujn/weather-server/weather/services"
 )
 
 const (
-	port = ":8081"
+	port        = ":8081"
 	certificate = "server.crt"
-	privateKey = "server.key"
+	privateKey  = "server.key"
 )
 
 // server is used to implement the pb.GetWeather service
 type server struct{}
 
 // ReturnWeather implements pb.GetWeather
-func (s *server) GetWeather(ctx context.Context, in *pb.LocationAndDate) (*pb.Weather, error){
+func (s *server) GetWeather(ctx context.Context, in *pb.LocationAndDate) (*pb.Weather, error) {
 	log.Println("Weather request received")
 	return getWeather(in.Location, in.Date)
 }
 
-func main(){
+func main() {
+	// set up the db rpc client that this server needs
+	connection, err := getRPCConnection()
+	defer connection.Close()
+
+	if err != nil {
+		log.Fatalf("Failed to get RPC connection")
+	}
+
+	setUpDBClient(connection)
+
 	// Create the channel to listen on
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
