@@ -5,41 +5,38 @@ import (
 	"os"
 	"testing"
 
-	pb "github.com/mungujn/weather-server/weather/services"
+	"github.com/mungujn/weather-server/common/utils"
+
 	"google.golang.org/grpc"
 )
 
 func TestMain(m *testing.M) {
-	log.Println("Running before")
+	log.Println("Running test setup")
+	connection, _ := getRPCConnection()
+	setUpDBClient(connection)
+
 	retCode := m.Run()
-	log.Println("Running aftter")
+	log.Println("Running test cleanup")
+	connection.Close()
 	os.Exit(retCode)
 }
 
 // TestGetWeather tests the weather data backend
 func TestGetWeather(t *testing.T) {
-	connection, err := getRPCConnection()
-	defer connection.Close()
-	setUpDBClient(connection)
-	
-	expecting := &pb.Weather{Location: "Kampala", Date: "Today", Temperature: 28}
+	expecting := make(map[string]string)
+	expecting["location"] = "Kampala"
+	expecting["temperature"] = "28"
+	expecting["date"] = "Today"
+
 	weather, err := getWeather("kampala", "today")
 
-	if err != nil || !weatherEquals(weather, expecting) {
+	if err != nil || !utils.MapsEqualish(expecting, weather.Data) {
 		t.Errorf("Failed to get weather, expecting: %v, got: %v, error: %v", expecting, weather, err)
+	} else {
+		t.Log("Weather retrieved")
 	}
-	t.Log("Weather retrieved")
-}
-
-// weatherEquals tests for weather equality
-func weatherEquals(w1, w2 *pb.Weather) bool {
-	if w1.Location == w2.Location && w1.Date == w2.Date && w1.Temperature == w2.Temperature {
-		return true
-	}
-	return false
 }
 
 func setUpTests(t *testing.T) *grpc.ClientConn {
-
 	return connection
 }

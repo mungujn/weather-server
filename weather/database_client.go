@@ -35,7 +35,7 @@ func createData(location string, data map[string]string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Data created")
+	log.Println("Data created: ", result)
 	return nil
 }
 
@@ -53,7 +53,7 @@ func readData(location string) (map[string]string, error) {
 		return nil, err
 	}
 
-	log.Println("Data read")
+	log.Println("Data read: ", result)
 	return result.Values, nil
 }
 
@@ -71,7 +71,7 @@ func updateData(location string, data map[string]string) error {
 		return err
 	}
 
-	log.Println("Updated")
+	log.Println("Updated: ", result)
 	return nil
 }
 
@@ -88,7 +88,7 @@ func deleteData(location string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Deleted")
+	log.Println("Deleted: ", result)
 	return nil
 }
 
