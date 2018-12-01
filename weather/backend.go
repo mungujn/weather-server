@@ -62,10 +62,10 @@ func readWeatherFromProvider(location, date string) (map[string]string, error) {
 	// mark retrieval time for caching logic
 	data["retrieved"] = strconv.FormatInt(utils.Timestamp(), 10)
 
-	// update the data in the db
+	// cache the fresh weather data in the db
 	go func() {
 		log.Println("Updating db weather data in thread")
-		updateData(location+"/"+date, data)
+		createData(location+"/"+date, data)
 	}()
 
 	return data, nil

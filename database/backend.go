@@ -34,7 +34,7 @@ func readData(location string) (map[string]string, error) {
 	return data, nil
 }
 
-// create data in the db
+// update data in the db
 func updateData(location string, newData map[string]string) error {
 	log.Printf("Updating %s", location)
 	oldData, exists := data[location]
