@@ -1,9 +1,11 @@
-package mock_services_test
+package tests
 
 import (
 	"fmt"
 	"testing"
 	"time"
+
+	"github.com/mungujn/weather-server/common/utils"
 
 	"golang.org/x/net/context"
 
@@ -27,14 +29,20 @@ func TestWeatherService(t *testing.T) {
 
 	client := getClient(ctrl)
 
+	expected := make(map[string]string)
+	expected["location"] = "Kampala"
+	expected["date"] = "Today"
+	expected["temperature"] = "28"
+
 	// test
-	response, err := client.GetWeather(ctx, &pb.LocationAndDate{Location: "location", Date: "today"})
+	response, err := client.GetWeather(ctx, &pb.LocationAndDate{Location: "kampala", Date: "today"})
 
 	// assert
-	if err != nil || response.Temperature != 28 || response.Location != "kampala" || response.Date != "today" {
-		t.Errorf("Get weather mocking failed")
+	if err != nil || !utils.MapsEqual(response.Data, expected) {
+		t.Errorf("Get weather mocking failed, expected: %v, got: %v, error: %v", expected, response.Data, err)
+	} else {
+		t.Log("Response : ", response)
 	}
-	t.Log("Response : ", response)
 }
 
 // get rpc client
@@ -42,12 +50,17 @@ func getClient(ctrl *gomock.Controller) pb.WeatherServiceClient {
 	if client == nil {
 		newClient := pbmock.NewMockWeatherServiceClient(ctrl)
 
-		req := &pb.LocationAndDate{Location: "location", Date: "today"}
+		req := &pb.LocationAndDate{Location: "kampala", Date: "today"}
+
+		values := make(map[string]string)
+		values["location"] = "Kampala"
+		values["date"] = "Today"
+		values["temperature"] = "28"
 
 		newClient.EXPECT().GetWeather(
 			gomock.Any(),
 			&rpcMsg{msg: req},
-		).Return(&pb.Weather{Temperature: 28, Location: "kampala", Date: "today"}, nil)
+		).Return(&pb.Weather{Data: values}, nil)
 
 		return newClient
 	}

@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"log"
@@ -14,8 +14,8 @@ const (
 	cacheTTL = 60 * 60 * 10
 )
 
-// getWeather retrieves weather
-func getWeather(location, date string) (*pb.Weather, error) {
+// GetWeather retrieves weather
+func GetWeather(location, date string) (*pb.Weather, error) {
 	log.Printf("Getting %s's weather in %s", date, location)
 	// read weather from db
 	path := location + "/" + date

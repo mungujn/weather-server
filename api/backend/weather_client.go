@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"log"
@@ -12,23 +12,21 @@ import (
 )
 
 const (
-	address     = "localhost:8081"
+	serviceAddress     = "localhost:8082"
 	name        = "weather_service"
 	certificate = "server.crt"
 )
 
 var connection *grpc.ClientConn
 
+// SetRPCConnection sets the active rpc connection
+func SetRPCConnection(newConnection *grpc.ClientConn){
+	connection = newConnection
+}
+
 //getWeather : get the weather
 func getWeather(location, date string) (*pb.Weather, error) {
 	log.Println("Getting weather from weather server")
-	connection, err := getRPCConnection()
-	defer connection.Close()
-
-	if err != nil {
-		log.Println("Failed to get RPC connection")
-		return nil, err
-	}
 
 	c := pb.NewWeatherServiceClient(connection)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -42,8 +40,8 @@ func getWeather(location, date string) (*pb.Weather, error) {
 	return weather, nil
 }
 
-//getRPCConnection returns an rpc connection
-func getRPCConnection() (*grpc.ClientConn, error) {
+//GetRPCConnection returns an rpc connection
+func GetRPCConnection() (*grpc.ClientConn, error) {
 	log.Println("Getting connection to RPC server")
 	if connection == nil {
 		log.Println("Creating new connection")
@@ -55,7 +53,7 @@ func getRPCConnection() (*grpc.ClientConn, error) {
 			return nil, err
 		}
 
-		connection, err := grpc.Dial(address, grpc.WithTransportCredentials(creds))
+		connection, err := grpc.Dial(serviceAddress, grpc.WithTransportCredentials(creds))
 		if err != nil {
 			log.Printf("Failed to connect: %v", err)
 			return nil, err

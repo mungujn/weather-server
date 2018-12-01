@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 )
 
+const (
+	ap = 10
+)
 // ok :
 type message struct {
 	Message string `json:"message"`
@@ -13,7 +17,8 @@ type message struct {
 
 // RespondWithData : Respond with data
 func RespondWithData(w http.ResponseWriter, data interface{}) {
-	log.Println("---Responding with data---")
+	p := strings.Repeat("-", ap)
+	log.Printf("%s Responding with data %s", p, p)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	responseJSON, _ := json.Marshal(data)
@@ -22,7 +27,8 @@ func RespondWithData(w http.ResponseWriter, data interface{}) {
 
 // RespondBadRequest : Respond bad request
 func RespondBadRequest(w http.ResponseWriter) {
-	log.Println("---Responding Bad request---")
+	p := strings.Repeat("-", ap)
+	log.Printf("%s Responding Bad request %s", p, p)
 	w.WriteHeader(http.StatusBadRequest)
 	w.Header().Set("Content-Type", "application/json")
 	response := message{Message: "No location/date specified"}
@@ -33,7 +39,8 @@ func RespondBadRequest(w http.ResponseWriter) {
 // RespondInternalServerError : Respond ISE
 func RespondInternalServerError(w http.ResponseWriter, err error) {
 	log.Println(err)
-	log.Println("---Responding ISE---")
+	p := strings.Repeat("-", ap)
+	log.Printf("%s Responding ISE %s", p, p)
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Content-Type", "application/json")
 	response := message{Message: "Internal Server Error"}

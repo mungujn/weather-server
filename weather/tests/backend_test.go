@@ -1,4 +1,4 @@
-package main
+package tests
 
 import (
 	"log"
@@ -6,14 +6,13 @@ import (
 	"testing"
 
 	"github.com/mungujn/weather-server/common/utils"
-
-	"google.golang.org/grpc"
+	"github.com/mungujn/weather-server/weather/backend"
 )
 
 func TestMain(m *testing.M) {
 	log.Println("Running test setup")
-	connection, _ := getRPCConnection()
-	setUpDBClient(connection)
+	connection, _ := backend.GetRPCConnection()
+	backend.SetRPCConnection(connection)
 
 	retCode := m.Run()
 	log.Println("Running test cleanup")
@@ -28,15 +27,11 @@ func TestGetWeather(t *testing.T) {
 	expecting["temperature"] = "28"
 	expecting["date"] = "Today"
 
-	weather, err := getWeather("kampala", "today")
+	weather, err := backend.GetWeather("kampala", "today")
 
 	if err != nil || !utils.MapsEqualish(expecting, weather.Data) {
 		t.Errorf("Failed to get weather, expecting: %v, got: %v, error: %v", expecting, weather, err)
 	} else {
 		t.Log("Weather retrieved")
 	}
-}
-
-func setUpTests(t *testing.T) *grpc.ClientConn {
-	return connection
 }

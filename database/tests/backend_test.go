@@ -1,19 +1,20 @@
-package main
+package tests
 
 import (
 	"testing"
 	"github.com/mungujn/weather-server/common/utils"
+	db "github.com/mungujn/weather-server/database/backend"
 )
 
 // TestCreate tests the create function
 func TestCreate(t *testing.T) {
-	setUpDb("localhost", "")
+	db.SetUpDb("localhost", "")
 
 	location := "kampala/today"
 	data := make(map[string]string)
 	data["temperature"] = "28"
 
-	err := createData(location, data)
+	err := db.CreateData(location, data)
 
 	if err != nil {
 		t.Errorf("Failed to save %v at %s", data, location)
@@ -23,15 +24,15 @@ func TestCreate(t *testing.T) {
 
 // TestRead tests the read function
 func TestRead(t *testing.T) {
-	setUpDb("localhost", "")
+	db.SetUpDb("localhost", "")
 
 	location := "kampala/today"
 	data := make(map[string]string)
 	data["temperature"] = "28"
 
-	createData(location, data)
+	db.CreateData(location, data)
 
-	savedData, err := readData(location)
+	savedData, err := db.ReadData(location)
 
 	if err != nil || !utils.MapsEqual(savedData, data) {
 		t.Errorf("Failed to read %s, expecting: %v got: %v %v", location, data, savedData, err)
@@ -41,15 +42,15 @@ func TestRead(t *testing.T) {
 
 // TestUpdate tests the update function
 func TestUpdate(t *testing.T) {
-	setUpDb("localhost", "")
+	db.SetUpDb("localhost", "")
 
 	location := "kampala/today"
 	data := make(map[string]string)
 	data["temperature"] = "28"
 
-	createData(location, data)
+	db.CreateData(location, data)
 
-	err := updateData(location, data)
+	err := db.UpdateData(location, data)
 
 	if err != nil {
 		t.Errorf("Failed to update %v at %s, error: %v", data, location, err)
@@ -59,11 +60,11 @@ func TestUpdate(t *testing.T) {
 
 // TestDelete tests the delete function
 func TestDelete(t *testing.T) {
-	setUpDb("localhost", "")
+	db.SetUpDb("localhost", "")
 
 	location := "kampala/today"
 
-	err := deleteData(location)
+	err := db.DeleteData(location)
 
 	if err != nil {
 		t.Errorf("Failed to delete %s, error: %v", location, err)

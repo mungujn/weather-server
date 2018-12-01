@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"log"
@@ -13,12 +13,14 @@ import (
 )
 
 const (
-	dbAddress = "localhost:8082"
+	dbAddress = "localhost:8081"
+	certificate = "server.crt"
 )
 
 var connection *grpc.ClientConn
 
-func setUpDBClient(newConnection *grpc.ClientConn) {
+// SetRPCConnection sets the active rpc connection 
+func SetRPCConnection(newConnection *grpc.ClientConn) {
 	connection = newConnection
 }
 
@@ -92,9 +94,9 @@ func deleteData(location string) error {
 	return nil
 }
 
-//getRPCConnection returns an rpc connection
-func getRPCConnection() (*grpc.ClientConn, error) {
-	log.Println("Getting connection to RPC server")
+//GetRPCConnection returns an rpc connection
+func GetRPCConnection() (*grpc.ClientConn, error) {
+	log.Println("Getting connection to Database RPC server")
 	if connection == nil {
 		log.Println("Creating new connection")
 

@@ -1,4 +1,4 @@
-package main
+package backend
 
 import (
 	"log"
@@ -8,22 +8,24 @@ import (
 
 var data map[string]map[string]string
 
-func setUpDb(host, port string) {
-	log.Printf("Db initialisation")
+// SetUpDb sets up the database
+func SetUpDb(host, port string) {
+	log.Printf("Initialising database engine")
 	if data == nil {
 		data = make(map[string]map[string]string)
 	}
+	log.Printf("Succeded")
 }
 
-// create data in the db
-func createData(location string, newData map[string]string) error {
+// CreateData creates data in the db
+func CreateData(location string, newData map[string]string) error {
 	log.Printf("Creating %s", location)
 	data[location] = newData
 	return nil
 }
 
-// create data in the db
-func readData(location string) (map[string]string, error) {
+// ReadData reads data in the db
+func ReadData(location string) (map[string]string, error) {
 	log.Printf("Reading %s", location)
 	data, exists := data[location]
 
@@ -34,8 +36,8 @@ func readData(location string) (map[string]string, error) {
 	return data, nil
 }
 
-// update data in the db
-func updateData(location string, newData map[string]string) error {
+// UpdateData updates data in the db
+func UpdateData(location string, newData map[string]string) error {
 	log.Printf("Updating %s", location)
 	oldData, exists := data[location]
 
@@ -51,8 +53,8 @@ func updateData(location string, newData map[string]string) error {
 	return nil
 }
 
-// create data in the db
-func deleteData(location string) error {
+// DeleteData deletes data in the db
+func DeleteData(location string) error {
 	log.Printf("Deleting %s", location)
 	delete(data, location)
 	return nil

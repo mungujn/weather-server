@@ -1,4 +1,4 @@
-package mock_services_test
+package tests
 
 import (
 	"testing"
@@ -14,8 +14,8 @@ import (
 
 var client pb.DatabaseServiceClient
 
-//TestCreate tests the create rpc method in pb.DatabaseService
-func TestCreate(t *testing.T) {
+//TestCreateRPC tests the create rpc method in pb.DatabaseService
+func TestCreateRPC(t *testing.T) {
 	// set up
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

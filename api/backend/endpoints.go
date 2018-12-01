@@ -1,38 +1,29 @@
-package main
+package backend
 
 import (
 	"log"
 	"net/http"
+	"strings"
+
 	"github.com/mungujn/weather-server/common/responses"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
-// createRouter : create router
-func createRouter() *mux.Router {
+// CreateRouter creates the mux router
+func CreateRouter() *mux.Router {
 	r := mux.NewRouter()
 
-	r.Handle("/weather", dataValidationMiddleware(http.HandlerFunc(WeatherHandler)))
+	r.Handle("/weather", dataValidationMiddleware(http.HandlerFunc(weatherHandler)))
 
 	return r
 }
 
-func main() {
-	router := createRouter()
-	port := "8080"
-
-	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
-	allowedMethods := handlers.AllowedMethods([]string{"GET"})
-	
-	log.Printf("Server listening on port %v", port)
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(allowedOrigins, allowedMethods)(router)))
-}
-
-//WeatherHandler : handler function for retrieving past weather
-func WeatherHandler(w http.ResponseWriter, r *http.Request) {
+//weatherHandler : handler function for retrieving past weather
+func weatherHandler(w http.ResponseWriter, r *http.Request) {
 	location, date, _ := getLocationAndDateFromURL(r)
-	log.Printf("---%v---", r.URL)
+	p := strings.Repeat("-", 10)
+	log.Printf("%s %v %s", p, r.URL, p)
 
 	wth, err := getWeather(location, date)
 
