@@ -8,15 +8,17 @@ import (
 
 var data map[string]map[string]string
 
-func init(host, port string) {
+func setUpDb(host, port string) {
 	log.Printf("Db initialisation")
-	data = make(map[string]map[string]string)
+	if data == nil {
+		data = make(map[string]map[string]string)
+	}
 }
 
 // create data in the db
-func createData(location string, data map[string]string) error {
+func createData(location string, newData map[string]string) error {
 	log.Printf("Creating %s", location)
-	data[location] = data
+	data[location] = newData
 	return nil
 }
 
@@ -33,16 +35,16 @@ func readData(location string) (map[string]string, error) {
 }
 
 // create data in the db
-func updateData(location string, data map[string]string) error {
+func updateData(location string, newData map[string]string) error {
 	log.Printf("Updating %s", location)
 	oldData, exists := data[location]
 
 	if !exists {
 		log.Println("Not found")
-		return nil, errors.New("Not found")
+		return errors.New("Not found")
 	}
 
-	for key, value := range data {
+	for key, value := range newData {
 		oldData[key] = value
 	}
 
@@ -53,4 +55,5 @@ func updateData(location string, data map[string]string) error {
 func deleteData(location string) error {
 	log.Printf("Deleting %s", location)
 	delete(data, location)
+	return nil
 }
