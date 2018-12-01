@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"time"
-	pb "weather/common/services"
+	pb "github.com/mungujn/weather/common/services"
 
 	"golang.org/x/net/context"
 

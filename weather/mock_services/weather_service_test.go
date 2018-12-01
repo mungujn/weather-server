@@ -1,4 +1,5 @@
 package mock_services_test
+package mock_services_test
 
 import (
 	"time"
@@ -6,8 +7,8 @@ import (
 	"fmt"
 	"testing"
 
-	pbmock "weather/common/mock_services"
-	pb "weather/common/services"
+	pbmock "github.com/mungujn/weather/common/mock_services"
+	pb "github.com/mungujn/weather/common/services"
 
 	"github.com/golang/mock/gomock"
 	"github.com/golang/protobuf/proto"

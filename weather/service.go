@@ -7,7 +7,7 @@ import (
 	"net"
 	"log"
 	"golang.org/x/net/context"
-	pb "weather/common/services"
+	pb "github.com/mungujn/weather/common/services"
 )
 
 const (

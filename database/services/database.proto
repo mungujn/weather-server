@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package services;
+
+// Database service definition
+service DatabaseService {
+    // create data
+    rpc Create(Data) returns (Result) {}
+    // read data
+    rpc Read(Data) returns (Data) {}
+    // update data
+    rpc Update(Data) returns (Result) {}
+    // delete data
+    rpc Delete(Data) returns (Result) {}
+}
+
+// Data
+message Data {
+    string location = 1;
+    map<string, string> values = 2;
+}
+
+// Write result
+message Result {
+    bool status = 3;
+    string message = 4;
+}

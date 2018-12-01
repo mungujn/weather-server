@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"weather/common/responses"
+	"github.com/mungujn/weather/common/responses"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"

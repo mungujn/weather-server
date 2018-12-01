@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package services;
+
+// Weather service definition
+service WeatherService {
+    // Retrieve the weather 
+    rpc GetWeather(LocationAndDate) returns (Weather) {}
+}
+
+// The message containing the location and date
+message LocationAndDate {
+    string location = 1;
+    string date = 2;
+}
+
+// The response message containing the weather
+message Weather {
+    string location = 1;
+    string date = 2;
+    int32 temperature = 3;
+}
