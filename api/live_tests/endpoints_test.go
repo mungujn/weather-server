@@ -1,12 +1,51 @@
 package tests
 
 import (
+	"github.com/mungujn/weather-server/common/utils"
+	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+
+	pb "github.com/mungujn/weather-server/weather/services"
 
 	"github.com/mungujn/weather-server/api/backend"
 )
+
+func TestMain(m *testing.M) {
+	log.Println("Running test setup")
+	connection, _ := backend.GetRPCConnection()
+	backend.SetRPCConnection(connection)
+
+	retCode := m.Run()
+	log.Println("Running test cleanup")
+	connection.Close()
+	os.Exit(retCode)
+}
+
+// TestWeatherHandler: test the location endpoint/handler
+func TestWeatherHandler(t *testing.T) {
+	expectedCode := http.StatusOK
+	// expectedBody := `{"location":"kampala","date":"today","temparature":28}`
+	bodyString := testEndpoint(t, "GET", "/weather?location=kampala&date=today", expectedCode)
+	weather := &pb.Weather{}
+	err := json.Unmarshal([]byte(bodyString), weather)
+
+	if err != nil {
+		t.Errorf("Error: %v", err)
+		return
+	}
+
+	expected := make(map[string]string)
+	expected["location"] = "kampala"
+	expected["date"] = "Today"
+	
+	if utils.MapsEqualish(expected, weather.Data) {
+		t.Errorf("Handler returned wrong body: got %v instead of %v", weather.Data, expected)
+	}
+}
 
 // TestBadRequest: test the location endpoint/handler returns bad request if no location/date specified
 func TestBadRequest(t *testing.T) {
