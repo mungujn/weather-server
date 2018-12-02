@@ -1,6 +1,6 @@
 language: go
 go:
-    - '1.8'
+    - '1.10.3'
 script:
     - go test github.com/mungujn/weather-server/database/tests -v
     - go test github.com/mungujn/weather-server/weather/tests -v
