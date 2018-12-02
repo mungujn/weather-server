@@ -13,13 +13,13 @@ import (
 )
 
 const (
-	dbAddress = "localhost:8081"
+	dbAddress   = "localhost:8081"
 	certificate = "server.crt"
 )
 
 var connection *grpc.ClientConn
 
-// SetRPCConnection sets the active rpc connection 
+// SetRPCConnection sets the active rpc connection
 func SetRPCConnection(newConnection *grpc.ClientConn) {
 	connection = newConnection
 }

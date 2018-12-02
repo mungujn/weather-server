@@ -27,7 +27,3 @@ func main() {
 	log.Printf("Server listening on port %v", port)
 	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(allowedOrigins, allowedMethods)(router)))
 }
-
-
-
-

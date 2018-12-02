@@ -6,10 +6,11 @@ package mock_services
 
 import (
 	context "context"
+	reflect "reflect"
+
 	gomock "github.com/golang/mock/gomock"
 	services "github.com/mungujn/weather-server/weather/services"
 	grpc "google.golang.org/grpc"
-	reflect "reflect"
 )
 
 // MockWeatherServiceClient is a mock of WeatherServiceClient interface

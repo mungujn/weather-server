@@ -1,13 +1,14 @@
-package tests
+package live_tests
 
 import (
-	"github.com/mungujn/weather-server/common/utils"
 	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/mungujn/weather-server/common/utils"
 
 	pb "github.com/mungujn/weather-server/weather/services"
 
@@ -28,7 +29,6 @@ func TestMain(m *testing.M) {
 // TestWeatherHandler: test the location endpoint/handler
 func TestWeatherHandler(t *testing.T) {
 	expectedCode := http.StatusOK
-	// expectedBody := `{"location":"kampala","date":"today","temparature":28}`
 	bodyString := testEndpoint(t, "GET", "/weather?location=kampala&date=today", expectedCode)
 	weather := &pb.Weather{}
 	err := json.Unmarshal([]byte(bodyString), weather)
@@ -41,7 +41,7 @@ func TestWeatherHandler(t *testing.T) {
 	expected := make(map[string]string)
 	expected["location"] = "kampala"
 	expected["date"] = "Today"
-	
+
 	if utils.MapsEqualish(expected, weather.Data) {
 		t.Errorf("Handler returned wrong body: got %v instead of %v", weather.Data, expected)
 	}

@@ -3,6 +3,7 @@ package backend
 import (
 	"log"
 	"time"
+
 	pb "github.com/mungujn/weather-server/weather/services"
 
 	"golang.org/x/net/context"
@@ -12,15 +13,15 @@ import (
 )
 
 const (
-	serviceAddress     = "localhost:8082"
-	name        = "weather_service"
-	certificate = "server.crt"
+	serviceAddress = "localhost:8082"
+	name           = "weather_service"
+	certificate    = "server.crt"
 )
 
 var connection *grpc.ClientConn
 
 // SetRPCConnection sets the active rpc connection
-func SetRPCConnection(newConnection *grpc.ClientConn){
+func SetRPCConnection(newConnection *grpc.ClientConn) {
 	connection = newConnection
 }
 

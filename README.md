@@ -1,5 +1,8 @@
 # Weather app backend
 
+[![Build Status](https://travis-ci.com/mungujn/weather-server.svg?branch=master)](https://travis-ci.com/mungujn/weather-server)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mungujn/weather-server)](https://goreportcard.com/report/github.com/mungujn/weather-server)
+
 Backend for a weather app. App consists of 3 services; an api, a database service and the core weather service.
 
 ## API Service

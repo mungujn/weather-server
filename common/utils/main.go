@@ -31,7 +31,6 @@ func MapsEqual(m1, m2 map[string]string) bool {
 	return true
 }
 
-
 //MapsEqualish checks if all keys and values in map m1 are in m2
 func MapsEqualish(m1, m2 map[string]string) bool {
 	for k1, v1 := range m1 {

@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/mungujn/weather-server/common/utils"
 	"log"
 	"net"
 
-	pb "github.com/mungujn/weather-server/weather/services"
+	"github.com/mungujn/weather-server/common/utils"
+
 	"github.com/mungujn/weather-server/weather/backend"
-	
+	pb "github.com/mungujn/weather-server/weather/services"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"

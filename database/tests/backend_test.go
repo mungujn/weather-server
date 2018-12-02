@@ -2,6 +2,7 @@ package tests
 
 import (
 	"testing"
+
 	"github.com/mungujn/weather-server/common/utils"
 	db "github.com/mungujn/weather-server/database/backend"
 )
