@@ -18,8 +18,7 @@ func main() {
 	defer connection.Close()
 
 	if err != nil {
-		log.Println("Failed to get RPC connection to weather service")
-		return nil, err
+		log.Fatalf("Failed to get RPC connection to weather service")
 	}
 
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"})

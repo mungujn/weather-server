@@ -6,3 +6,6 @@ server.csr
 server.key
 command.txt
 prog.bin.exe
+.env
+script.py
+escaped.txt

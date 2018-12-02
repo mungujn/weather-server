@@ -14,7 +14,7 @@ func SetUpDb(host, port string) {
 	if data == nil {
 		data = make(map[string]map[string]string)
 	}
-	log.Printf("Succeded")
+	log.Printf("Done")
 }
 
 // CreateData creates data in the db

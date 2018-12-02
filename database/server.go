@@ -4,8 +4,10 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/mungujn/weather-server/database/services"
+	"github.com/mungujn/weather-server/common/utils"
+
 	"github.com/mungujn/weather-server/database/backend"
+	pb "github.com/mungujn/weather-server/database/services"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -20,20 +22,25 @@ const (
 )
 
 func main() {
+	log.Println("Database RPC server starting...")
+	utils.LoadDotEnvFile()
+	utils.WriteServerKeysFromEnv()
+
 	// Create the channel to listen on
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("Failed to listed: %v", err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
-	log.Println("Database RPC server starting...")
+
 	backend.SetUpDb("host", "port")
-	log.Printf("TCP Listening on port: %v", port)
 
 	// Add TLS credentials
 	creds, err := credentials.NewServerTLSFromFile(certificate, privateKey)
 	if err != nil {
 		log.Fatalf("Failed to load TLS keys: %v", err)
 	}
+
+	log.Printf("TCP Listening on port: %v", port)
 
 	s := grpc.NewServer(grpc.Creds(creds))
 	pb.RegisterDatabaseServiceServer(s, &backend.Server{})
