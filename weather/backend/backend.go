@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	cacheTTL = 60 * 60 * 10
+	cacheTTL = 60 * 60 * 10 // Not really necessary since redis can do this
 )
 
 // GetWeather retrieves weather
@@ -22,7 +22,7 @@ func GetWeather(location, date string) (*pb.Weather, error) {
 	data, err := readData(path)
 
 	// if the data doesnt exist in the db, get it fresh from the provider
-	if err != nil {
+	if data["location"] == "" || err != nil {
 		log.Println("Weather data not found in DB")
 		return refreshWeatherData(location, date)
 	}

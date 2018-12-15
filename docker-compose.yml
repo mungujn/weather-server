@@ -1,0 +1,24 @@
+version: '3'
+services:
+    wapi:
+        build: ./api
+        image: mungujn/wapi
+        ports:
+            - 8080:8080
+        volumes:
+            - '~/j-t/data:/data'
+        depends_on:
+            - weather
+    weather:
+        build: ./weather
+        image: mungujn/weather
+        volumes:
+            - '~/j-t/data:/data'
+        depends_on:
+            - rdb
+    rdb:
+        build: ./rdb
+        image: mugujn/rdb
+        volumes:
+            - '~/j-t/data/redis:/data'
+    

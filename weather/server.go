@@ -4,8 +4,6 @@ import (
 	"log"
 	"net"
 
-	"github.com/mungujn/weather-server/common/utils"
-
 	"github.com/mungujn/weather-server/weather/backend"
 	pb "github.com/mungujn/weather-server/weather/services"
 
@@ -15,24 +13,16 @@ import (
 )
 
 const (
-	port        = ":8082"
-	certificate = "server.crt"
-	privateKey  = "server.key"
+	port        = ":8081"
+	certificate = "/data/weather.crt"
+	privateKey  = "/data/weather.key"
 )
 
 func main() {
 	log.Println("Weather RPC server initialising...")
-	utils.LoadDotEnvFile()
-	utils.WriteServerKeysFromEnv()
-	// set up the db rpc client that this server needs
-	connection, err := backend.GetRPCConnection()
-	defer connection.Close()
 
-	if err != nil {
-		log.Fatalf("Failed to get RPC connection to database service")
-	}
-
-	backend.SetRPCConnection(connection)
+	// set up the db client that this server needs
+	backend.SetUpRedis()
 
 	// Create the channel to listen on
 	lis, err := net.Listen("tcp", port)

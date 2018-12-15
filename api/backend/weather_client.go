@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	serviceAddress = "localhost:8082"
+	serviceAddress = "weather:8081"
 	name           = "weather_service"
-	certificate    = "server.crt"
+	certificate    = "/data/weather.crt"
 )
 
 var connection *grpc.ClientConn

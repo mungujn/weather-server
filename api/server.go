@@ -1,4 +1,4 @@
-package backend
+package main
 
 import (
 	"log"
@@ -7,6 +7,11 @@ import (
 	"github.com/mungujn/weather-server/api/backend"
 
 	"github.com/gorilla/handlers"
+)
+
+const (
+	servercrt = "/data/wapi.crt"
+	serverkey = "/data/wapi.key"
 )
 
 func main() {
@@ -21,9 +26,11 @@ func main() {
 		log.Fatalf("Failed to get RPC connection to weather service")
 	}
 
+	backend.SetRPCConnection(connection)
+
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
 	allowedMethods := handlers.AllowedMethods([]string{"GET"})
 
 	log.Printf("Server listening on port %v", port)
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS(allowedOrigins, allowedMethods)(router)))
+	log.Fatal(http.ListenAndServeTLS(":"+port, servercrt, serverkey, handlers.CORS(allowedOrigins, allowedMethods)(router)))
 }

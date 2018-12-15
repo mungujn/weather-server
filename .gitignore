@@ -1,4 +1,7 @@
 .vscode
+build/
+data/
+*/build/
 debug.test
 cert.txt
 server.crt

@@ -14,8 +14,16 @@ This service exposes an API endpoint that client apps access to retrieve informa
 This service retrieves weather information from a provider. The server for this service is an RPC server, built using gRPC. It exposes one RPC service, 'GetWeather' for retrieving the weather. The GetWeather operation first uses an RPC client (that connects to the database RPC service) to read weather data cached in the database.
 If the weather request is for a location not in the database, or if the weather data retrieved from the database is too old, the service fetches fresh data from a weather provider (still not yet determined), immediately returns this data to the API service and then uses a separate thread (goroutine) to cache the newly retrieved weather data by making a create RPC call to the database service
 
-## Database service
+## Redis Database service
 
-This service is also a remote procedure call server. It exposes 4 methods, for the standard database CRUD operations.
+A slightly customised redis server. Based on the alpine redis image with a modified configuration file.
 
 Communication between services is encrypted and secured with SSL/TLS.
+
+Run
+
+`docker-compose up`
+
+ to bring up all the services
+
+Supply two SSL key file pairs; "wapi.crt", "wapi.key" and "weather.crt", "weather.key" in a docker volume (or bind mount like in my docker-compose.yml file)

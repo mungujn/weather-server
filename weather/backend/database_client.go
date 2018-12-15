@@ -1,119 +1,79 @@
 package backend
 
+// TODO : add error checking
+
 import (
 	"log"
-	"time"
+	"path/filepath"
 
-	pb "github.com/mungujn/weather-server/database/services"
-
-	"golang.org/x/net/context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"github.com/go-redis/redis"
 )
 
-const (
-	dbAddress   = "localhost:8081"
-	certificate = "server.crt"
-)
+var client *redis.Client
 
-var connection *grpc.ClientConn
-
-// SetRPCConnection sets the active rpc connection
-func SetRPCConnection(newConnection *grpc.ClientConn) {
-	connection = newConnection
+// SetUpRedis sets up redis
+func SetUpRedis() {
+	setRedisClient(createRedisClient())
 }
 
-//createData creates data in the db
-func createData(location string, data map[string]string) error {
-	log.Println("Creating data")
-
-	c := pb.NewDatabaseServiceClient(connection)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	result, err := c.Create(ctx, &pb.Data{Location: location, Values: data})
-
-	if err != nil {
-		return err
+// createData creates a map
+func createData(key string, mp map[string]string) {
+	mapInterface := make(map[string]interface{})
+	for k, v := range mp {
+		mapInterface[k] = v
 	}
-	log.Println("Data created: ", result)
-	return nil
+	res := client.HMSet(key, mapInterface)
+	logResponse(res)
 }
 
-// readData reads data from the db
-func readData(location string) (map[string]string, error) {
-	log.Println("Reading data")
-
-	c := pb.NewDatabaseServiceClient(connection)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	result, err := c.Read(ctx, &pb.Data{Location: location, Values: nil})
-
-	if err != nil {
-		return nil, err
+// readFile
+func readData(filename string) (map[string]string, error) {
+	val, res := client.HGetAll(filename).Result()
+	logResponse(res)
+	if res != nil {
+		log.Printf("Read data error: %v", res)
+		return nil, res
 	}
-
-	log.Println("Data read: ", result)
-	return result.Values, nil
+	return val, nil
 }
 
-// updateData updates data
-func updateData(location string, data map[string]string) error {
-	log.Println("Updating data")
-
-	c := pb.NewDatabaseServiceClient(connection)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	result, err := c.Update(ctx, &pb.Data{Location: location, Values: data})
-
-	if err != nil {
-		return err
-	}
-
-	log.Println("Updated: ", result)
-	return nil
+// updateFile
+func updateData(key string, mp map[string]interface{}) {
+	res := client.HMSet(key, mp)
+	logResponse(res)
 }
 
-// deleteData deletes data
-func deleteData(location string) error {
-	log.Println("Deleting data")
-
-	c := pb.NewDatabaseServiceClient(connection)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	result, err := c.Delete(ctx, &pb.Data{Location: location, Values: nil})
-
-	if err != nil {
-		return err
-	}
-	log.Println("Deleted: ", result)
-	return nil
+// deleteFile
+func deleteData(key string) {
+	res := client.HDel(key)
+	logResponse(res)
 }
 
-//GetRPCConnection returns an rpc connection
-func GetRPCConnection() (*grpc.ClientConn, error) {
-	log.Println("Getting connection to Database RPC server")
-	if connection == nil {
-		log.Println("Creating new connection")
+// createRedisClient creates a redis client
+func createRedisClient() *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:     "rdb:6379",
+		Password: "",
+		DB:       0,
+	})
 
-		creds, err := credentials.NewClientTLSFromFile(certificate, "")
+}
 
-		if err != nil {
-			log.Printf("Failed to load tls certificate: %v", err)
-			return nil, err
-		}
+// setRedisClient sets up the redis client
+func setRedisClient(c *redis.Client) {
+	client = redis.NewClient(&redis.Options{
+		Addr:     "rdb:6379",
+		Password: "",
+		DB:       0,
+	})
+}
 
-		connection, err := grpc.Dial(dbAddress, grpc.WithTransportCredentials(creds))
-		if err != nil {
-			log.Printf("Failed to connect: %v", err)
-			return nil, err
-		}
-		return connection, nil
-	}
-	log.Println("Reusing RPC connection")
-	return connection, nil
+func getAbs(filename string) string {
+	abName, res := filepath.Abs("data/" + filename)
+	logResponse(res)
+	return abName
+}
+
+func logResponse(res interface{}) {
+	log.Println(res)
 }
