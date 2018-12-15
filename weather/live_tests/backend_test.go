@@ -1,4 +1,4 @@
-package live_tests
+package livetests
 
 import (
 	"log"
